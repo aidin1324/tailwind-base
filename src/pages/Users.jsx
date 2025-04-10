@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAllUsers } from '../store/async/usersAsync.js';
+import { fetchAllUsers } from '../store/async/usersAsync';
 import UserCard from '../components/UserCard';
 
 function Users() {

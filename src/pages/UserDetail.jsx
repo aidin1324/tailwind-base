@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserById } from '../store/async/usersAsync.js';
+import { fetchUserById } from '../store/async/usersAsync';
 
 function UserDetail() {
   const { userId } = useParams();
