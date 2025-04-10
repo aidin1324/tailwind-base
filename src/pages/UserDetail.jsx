@@ -1,31 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUserById } from '../store/async/usersAsync.js';
 
 function UserDetail() {
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { currentUser, loading, error } = useSelector(state => state.users);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`https://fakestoreapi.com/users/${userId}`);
-        if (!response.ok) {
-          throw new Error('User not found');
-        }
-        const data = await response.json();
-        setUser(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [userId]);
+    dispatch(fetchUserById(userId));
+  }, [dispatch, userId]);
 
   if (loading) {
     return (
@@ -35,7 +21,7 @@ function UserDetail() {
     );
   }
 
-  if (error || !user) {
+  if (error || !currentUser) {
     return (
       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
         <p>Error: {error || 'User not found'}</p>
@@ -50,39 +36,39 @@ function UserDetail() {
     <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
       <div className="flex flex-col md:flex-row items-start gap-8">
         <img 
-          src={`https://i.pravatar.cc/150?img=${user.id}`} 
-          alt={`${user.name.firstname} ${user.name.lastname}`}
+          src={`https://i.pravatar.cc/150?img=${currentUser.id}`} 
+          alt={`${currentUser.name.firstname} ${currentUser.name.lastname}`}
           className="w-32 h-32 rounded-full object-cover"
         />
         <div>
           <h1 className="text-3xl font-bold mb-2">
-            {user.name.firstname} {user.name.lastname}
+            {currentUser.name.firstname} {currentUser.name.lastname}
           </h1>
-          <p className="text-gray-600 mb-4">{user.email}</p>
+          <p className="text-gray-600 mb-4">{currentUser.email}</p>
           
           <div className="space-y-4">
             <div>
               <h2 className="text-xl font-semibold">Address</h2>
-              <p>{user.address.street}, {user.address.number}</p>
-              <p>{user.address.city}, {user.address.zipcode}</p>
+              <p>{currentUser.address.street}, {currentUser.address.number}</p>
+              <p>{currentUser.address.city}, {currentUser.address.zipcode}</p>
             </div>
             
             <div>
               <h2 className="text-xl font-semibold">Contact</h2>
-              <p>Phone: {user.phone}</p>
+              <p>Phone: {currentUser.phone}</p>
             </div>
             
             <div>
               <h2 className="text-xl font-semibold">Geolocation</h2>
-              <p>Latitude: {user.address.geolocation.lat}</p>
-              <p>Longitude: {user.address.geolocation.long}</p>
+              <p>Latitude: {currentUser.address.geolocation.lat}</p>
+              <p>Longitude: {currentUser.address.geolocation.long}</p>
             </div>
             
             <div>
               <h2 className="text-xl font-semibold">Login Info</h2>
-              <p>Username: {user.username}</p>
+              <p>Username: {currentUser.username}</p>
               <div className="flex items-center">
-                <p>Password: {showPassword ? user.password : '••••••••'}</p>
+                <p>Password: {showPassword ? currentUser.password : '••••••••'}</p>
                 <button 
                   onClick={() => setShowPassword(!showPassword)}
                   className="ml-2 text-sm text-blue-500 hover:text-blue-700"

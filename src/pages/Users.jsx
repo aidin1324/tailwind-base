@@ -1,29 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAllUsers } from '../store/async/usersAsync.js';
 import UserCard from '../components/UserCard';
 
 function Users() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { usersList, loading, error } = useSelector(state => state.users);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch('https://fakestoreapi.com/users');
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        const data = await response.json();
-        setUsers(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+    dispatch(fetchAllUsers());
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -45,7 +31,7 @@ function Users() {
     <div>
       <h1 className="text-3xl font-bold mb-8 text-center">Users List</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map(user => (
+        {usersList.map(user => (
           <UserCard key={user.id} user={user} />
         ))}
       </div>
